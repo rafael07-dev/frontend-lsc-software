@@ -9,6 +9,7 @@ import { ToastContainer } from 'react-toastify';
 import ConfirmationEmail from './components/ConfirmationEmail';
 import Diccionary from './components/Diccionary';
 import Footer from './components/Footer';
+import Quiz from './components/Quiz';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
               <Route path="/confirmation" element={<ConfirmationEmail />} />
               <Route path="/" element={<Home />} />
               <Route path="/diccionario" element={<Diccionary />} />
+              <Route path="/quiz" element={<Quiz />} />
             </Routes>
             <ToastContainer />
           </main>
