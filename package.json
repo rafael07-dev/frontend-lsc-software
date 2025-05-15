@@ -10,8 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "lucide-react": "^0.507.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.5.3",
+    "react-toastify": "^11.0.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",
@@ -26,6 +29,6 @@
     "globals": "^15.9.0",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.14",
-    "vite": "^5.4.8"
+    "vite": "^6.3.5"
   }
 }
