@@ -1,24 +1,70 @@
-import { NavItem } from "./NavItem";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 export function Header() {
+
+    const navigate = useNavigate();
+    const { token, logOut } = useAuth();
+    const isLoggedIn = !!token;
+
     return (
-        <header className="bg-white shadow-md">
+        <header className="bg-white shadow-md z-50">
             <div className="container mx-auto flex justify-between items-center h-20 px-6">
                 {/* Sección del Logo */}
-                <div className="flex items-center space-x-2">
-                    <img src="src/assets/img/logo.png" width="40" height="40" alt="Logo" />
-                    <h1 className="text-lg font-bold text-gray-800">LCS SOFTWARE</h1>
+                <div>
+                    <img className="cursor-pointer" onClick={() => navigate("/")} src="src/assets/img/logo-lsc.png" width="160" height="160" alt="Logo" />
                 </div>
 
                 {/* Sección de Navegación */}
                 <nav>
                     <ul className="flex space-x-6">
-                        <NavItem href="#" label="Inicio" />
-                        <NavItem href="#" label="Diccionario" />
-                        <NavItem href="#" label="Aprendizaje" />
-                        <NavItem href="#" label="Quiz" />
-                        <NavItem href="#" label="Login" />
-                        <NavItem href="#" label="Sing up" />
+                        {isLoggedIn ? (
+                            <>
+                                <li>
+                                    <button
+                                        onClick={() => navigate("/diccionario")}
+                                        className="text-gray-600 font-bold hover:text-blue-800"
+                                    >
+                                        Diccionario
+                                    </button>
+                                </li>
+                                <li>
+                                    <button
+                                        onClick={() => navigate("/quiz")}
+                                        className="text-gray-600 font-bold hover:text-blue-800"
+                                    >
+                                        Quiz
+                                    </button>
+                                </li>
+                                <li>
+                                    <button
+                                        onClick={() => logOut()}
+                                        className="text-gray-600 font-bold hover:text-blue-800"
+                                    >
+                                        Cerra sesion
+                                    </button>
+                                </li>
+                            </>
+                        ) : (
+                            <>
+                                <li>
+                                    <button
+                                        onClick={() => navigate("/login")}
+                                        className="text-gray-600 font-bold hover:text-blue-800"
+                                    >
+                                        Iniciar Sesión
+                                    </button>
+                                </li>
+                                <li>
+                                    <button
+                                        onClick={() => navigate("/register")}
+                                        className="text-gray-600 font-bold hover:text-blue-800"
+                                    >
+                                        Registrate
+                                    </button>
+                                </li>
+                            </>
+                        )}
                     </ul>
                 </nav>
             </div>
