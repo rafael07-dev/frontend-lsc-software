@@ -10,6 +10,8 @@ import ConfirmationEmail from './components/ConfirmationEmail';
 import Diccionary from './components/Diccionary';
 import Footer from './components/Footer';
 import Quiz from './components/Quiz';
+import AdminPanel from './components/AdminPanel';
+import Words from './components/Words';
 
 function App() {
   return (
@@ -25,6 +27,9 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/diccionario" element={<Diccionary />} />
               <Route path="/quiz" element={<Quiz />} />
+              <Route path="/admin-panel" element={<AdminPanel />} >
+                <Route path='words' element={<Words/>} />
+              </Route>
             </Routes>
             <ToastContainer />
           </main>
