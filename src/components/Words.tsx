@@ -1,0 +1,115 @@
+import { useEffect, useState } from "react";
+import { useAuth } from "../hooks/useAuth";
+import AddWord from "./AddWord";
+
+interface Word {
+    id: number;
+    word: string;
+    letter: {
+        id: number;
+        letter: string;
+    };
+}
+
+const Words = () => {
+    const URL: string = "http://localhost:8080/api/words/";
+    const [words, setWords] = useState<Word[]>([]);
+    const [showModal, setShowModal] = useState<boolean>(false)
+    const { token } = useAuth();
+
+    useEffect(() => {
+        if (!token) return;
+
+        async function getWords() {
+            try {
+                const res = await fetch(URL, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!res.ok) {
+                    throw new Error("No se pudo obtener las palabras");
+                }
+
+                const data: Word[] = await res.json();
+                console.log("Datos recibidos:", data);
+                setWords(data);
+            } catch (error) {
+                console.error("Error al obtener palabras:", error);
+            }
+        }
+
+        getWords();
+    }, [token]);
+
+    function onShowModal() {
+        setShowModal(true)
+    }
+
+    function onCloseModal() {
+        setShowModal(false)
+    }
+
+    return (
+        <div className="bg-white rounded-xl shadow p-4 sm:p-6">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 text-center mb-4">
+                Palabras disponibles
+            </h1>
+            <div className="flex justify-end mb-4">
+                <button
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow-md
+               transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    onClick={onShowModal}
+                >
+                    Agregar palabra
+                </button>
+            </div>
+
+            {/* modal to add word*/}
+            <AddWord visible={showModal} onClose={onCloseModal} />
+
+            {words.length === 0 ? (
+                <p className="text-center text-gray-500">No hay palabras disponibles.</p>
+            ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                    {words.map(
+                        (w) =>
+                            w &&
+                            w.letter && (
+                                <div
+                                    key={w.id}
+                                    className="bg-gray-100 rounded-md p-3 text-sm shadow hover:shadow-md transition duration-200"
+                                >
+                                    <div className="flex items-center justify-between mb-1">
+                                        <h2 className="font-semibold text-gray-700 truncate">{w.word}</h2>
+                                        <div className="flex gap-1">
+                                            <button
+                                                className="bg-blue-200 text-blue-700 px-2 py-0.5 rounded hover:bg-blue-300 transition text-xs"
+                                                type="button"
+                                            >
+                                                Editar
+                                            </button>
+                                            <button
+                                                className="bg-red-200 text-red-700 px-2 py-0.5 rounded hover:bg-red-300 transition text-xs"
+                                                type="button"
+                                            >
+                                                Eliminar
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <p className="text-gray-500 text-xs">
+                                        Letra: <span className="font-medium">{w.letter.letter}</span>
+                                    </p>
+                                </div>
+                            )
+                    )}
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default Words;
