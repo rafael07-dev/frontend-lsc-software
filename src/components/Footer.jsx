@@ -1,4 +1,5 @@
 import { Facebook, Instagram, Mail, Phone } from "lucide-react";
+import logo from "../assets/img/logo-lsc.png";
 
 const Footer = () => {
     return (
@@ -6,7 +7,7 @@ const Footer = () => {
             <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10">
                 {/* Logo y descripción */}
                 <div className="flex items-center md:items-center">
-                    <img src="src/assets/img/logo-lsc.png" alt="Logo LSC Software" width={200} height={200} />
+                    <img src={logo} alt="Logo LSC Software" width={200} height={200} />
                     <p className="text-sm text-gray-300 font-bold leading-relaxed text-center md:text-center">
                         LSC Software desarrolla soluciones tecnológicas para una comunicación inclusiva a través del lenguaje de señas.
                     </p>

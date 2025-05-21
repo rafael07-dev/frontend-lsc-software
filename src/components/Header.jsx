@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import logo from "../assets/img/logo-lsc.png";
 
 export function Header() {
 
@@ -12,7 +13,7 @@ export function Header() {
             <div className="container mx-auto flex justify-between items-center h-20 px-6">
                 {/* Sección del Logo */}
                 <div>
-                    <img className="cursor-pointer" onClick={() => navigate("/")} src="src/assets/img/logo-lsc.png" width="160" height="160" alt="Logo" />
+                    <img className="cursor-pointer" onClick={() => navigate("/")} src={logo} width="160" height="160" alt="Logo" />
                 </div>
 
                 {/* Sección de Navegación */}
@@ -34,6 +35,14 @@ export function Header() {
                                         className="text-gray-600 font-bold hover:text-blue-800"
                                     >
                                         Quiz
+                                    </button>
+                                </li>
+                                <li>
+                                    <button
+                                        onClick={() => navigate("/admin-panel")}
+                                        className="text-gray-600 font-bold hover:text-blue-800"
+                                    >
+                                        Admin panel
                                     </button>
                                 </li>
                                 <li>
