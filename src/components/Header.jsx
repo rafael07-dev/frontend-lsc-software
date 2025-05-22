@@ -39,7 +39,7 @@ export function Header() {
                                 </li>
                                 <li>
                                     <button
-                                        onClick={() => navigate("/admin-panel")}
+                                        onClick={() => navigate("/admin")}
                                         className="text-gray-600 font-bold hover:text-blue-800"
                                     >
                                         Admin panel
