@@ -51,7 +51,7 @@ const AdminPanel = () => {
             {/* Sidebar */}
             <aside className="w-64 bg-gray-800 text-white flex flex-col py-6 px-4 shadow-md">
                 <h2 className="text-lg font-bold text-center mb-4">
-                    Panel de Admin
+                    Panel administrador
                 </h2>
 
                 {user && (
@@ -63,13 +63,13 @@ const AdminPanel = () => {
 
                 <nav className="flex-1 space-y-2">
                     {[
-                        { to: "/admin-panel", label: "Dashboard" },
-                        { to: "/admin-panel/users", label: "Usuarios" },
-                        { to: "/admin-panel/letters", label: "Letras" },
-                        { to: "/admin-panel/words", label: "Palabras" },
-                        { to: "/admin-panel/multimedia", label: "Multimedia" },
-                        { to: "/admin-panel/questions", label: "Preguntas" },
-                        { to: "/admin-panel/settings", label: "Configuración" },
+                        { to: "/admin", label: "Dashboard" },
+                        { to: "/admin/users", label: "Usuarios" },
+                        { to: "/admin/letters", label: "Letras" },
+                        { to: "/admin/words", label: "Palabras" },
+                        { to: "/admin/media", label: "Multimedia" },
+                        { to: "/admin/questions", label: "Preguntas" },
+                        { to: "/admin/settings", label: "Configuración" },
                     ].map((item) => (
                         <Link
                             key={item.to}
