@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { useAuth } from "../hooks/useAuth";
+import { useState } from "react";
 import AddWord from "./AddWord";
 import EditWord from "./EditWord";
+import { useWords } from "../hooks/useWords";
 
-interface Word {
+export interface Word {
     id: number;
     word: string;
     letter: {
@@ -13,56 +13,10 @@ interface Word {
 }
 
 const Words = () => {
-    const URL: string = "http://localhost:8080/api/words/";
-    const [words, setWords] = useState<Word[]>([]);
     const [showAddModal, setShowAddModal] = useState<boolean>(false)
     const [showEditModal, setShowEditModal] = useState<boolean>(false)
     const [currentWord, setCurrentWord] = useState<Word | null>(null)
-    const { token } = useAuth();
-
-    async function getWords() {
-        try {
-            const res = await fetch(URL, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            if (!res.ok) {
-                throw new Error("No se pudo obtener las palabras");
-            }
-
-            const data: Word[] = await res.json();
-            console.log("Datos recibidos:", data);
-            setWords(data);
-        } catch (error) {
-            console.error("Error al obtener palabras:", error);
-        }
-    }
-
-    async function deleteWord(id: number) {
-        const url = `http://localhost:8080/api/words/delete/${id}`;
-        try {
-            const res = await fetch(url, {
-                method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                }
-            });
-
-            if (!res.ok) {
-                throw new Error("No se pudo eliminar la palabra");
-            }
-
-            getWords()
-
-        } catch (error) {
-            console.error("Error al eliminar palabra:", error);
-        }
-    }
+    const {getWords, words, deleteWord} = useWords();
 
     function onShowAddModal() {
         setShowAddModal(true)
@@ -82,12 +36,6 @@ const Words = () => {
         setCurrentWord(null)
         getWords()
     }
-
-    useEffect(() => {
-        if (!token) return;
-
-        getWords();
-    }, [token]);
 
     return (
         <div className="bg-white rounded-xl shadow p-4 sm:p-6">

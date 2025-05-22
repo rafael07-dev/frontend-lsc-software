@@ -1,5 +1,7 @@
 import { useAuth } from "../hooks/useAuth";
 import { useEffect, useState } from "react";
+import { useWords } from "../hooks/useWords";
+import { toast } from "react-toastify";
 
 interface Word {
     word: string;
@@ -24,7 +26,7 @@ const AddWord = ({ visible, onClose }: AddWordProps) => {
     })
 
     const [letters, setLetters] = useState<Letter[]>([])
-
+    const {createWord} = useWords()
     const { token } = useAuth();
 
     useEffect(() => {
@@ -60,7 +62,7 @@ const AddWord = ({ visible, onClose }: AddWordProps) => {
 
     function handleInput(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
         console.log(e);
-        
+
         const { name, value } = e.target;
 
         setWord((prev) => ({ ...prev, [name]: value }));
@@ -75,39 +77,13 @@ const AddWord = ({ visible, onClose }: AddWordProps) => {
         }
 
         await createWord(wordSent);
+        setWord({
+            word: "",
+            letter_id: 0
+        })
         onClose();
-    }
 
-    async function createWord(word: Word) {
-
-        console.log(word);
-        
-
-        try {
-
-            const URL = "http://localhost:8080/api/words/create"
-
-            if (!word) {
-                return;
-            }
-
-            const res = await fetch(URL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify(word)
-            });
-
-            if (!res.ok) {
-                throw new Error("No se pudo crear la palabra")
-            }
-
-        } catch (error) {
-            console.log(error);
-
-        }
+        toast.success("Palabra agregada correctamente")
     }
 
     if (!visible) {

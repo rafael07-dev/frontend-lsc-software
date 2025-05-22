@@ -1,5 +1,7 @@
 import { useAuth } from "../hooks/useAuth";
 import { useEffect, useState } from "react";
+import { useWords } from "../hooks/useWords";
+import { toast } from "react-toastify";
 
 interface Word {
     id: number;
@@ -21,17 +23,13 @@ interface EditWordProps {
     currentWord: Word;
 }
 
-interface WordRequest {
-    word: string;
-    letter_id: number;
-}
-
 const EditWord = ({ visible, onClose, currentWord }: EditWordProps) => {
 
     const [wordText, setWordText] = useState<string>("")
     const [letterId, setLetterId] = useState<number | "">("")
     const [letters, setLetters] = useState<Letter[]>([])
     const { token } = useAuth();
+    const {updateWord} = useWords()
 
     useEffect(() => {
 
@@ -81,39 +79,7 @@ const EditWord = ({ visible, onClose, currentWord }: EditWordProps) => {
 
         await updateWord(wordSent, currentWord.id);
         onClose();
-    }
-
-
-    async function updateWord(word: WordRequest, id: number) {
-
-        console.log(currentWord.id);
-        
-
-        try {
-
-            const URL = `http://localhost:8080/api/words/update/${id}`;
-
-            if (!word) {
-                return;
-            }
-
-            const res = await fetch(URL, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify(word)
-            });
-
-            if (!res.ok) {
-                throw new Error("No se pudo crear la palabra")
-            }
-
-        } catch (error) {
-            console.log(error);
-
-        }
+        toast.success("Palabra editada correctamente");
     }
 
     useEffect(()=>{
