@@ -12,6 +12,8 @@ import Footer from './components/Footer';
 import Quiz from './components/Quiz';
 import AdminPanel from './components/AdminPanel';
 import Words from './components/Words';
+import Media from './components/Media';
+import AddMedia from './components/AddMedia';
 
 function App() {
   return (
@@ -27,8 +29,11 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/diccionario" element={<Diccionary />} />
               <Route path="/quiz" element={<Quiz />} />
-              <Route path="/admin-panel" element={<AdminPanel />} >
+              <Route path="/admin" element={<AdminPanel />} >
                 <Route path='words' element={<Words/>} />
+                <Route path='media' element={<Media />} >
+                  <Route path='add' element={<AddMedia/>} />
+                </Route>
               </Route>
             </Routes>
             <ToastContainer />
