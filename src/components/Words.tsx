@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddWord from "./AddWord";
 import EditWord from "./EditWord";
 import { useWords } from "../hooks/useWords";
+
+import Pagination from "./Pagination";
 
 export interface Word {
     id: number;
@@ -16,7 +18,8 @@ const Words = () => {
     const [showAddModal, setShowAddModal] = useState<boolean>(false)
     const [showEditModal, setShowEditModal] = useState<boolean>(false)
     const [currentWord, setCurrentWord] = useState<Word | null>(null)
-    const {getWords, words, deleteWord} = useWords();
+    const { getWords, words, deleteWord, currentPage, 
+            setCurrentPage, totalPages, pageSize } = useWords();
 
     function onShowAddModal() {
         setShowAddModal(true)
@@ -34,12 +37,16 @@ const Words = () => {
     function onCloseEditModal() {
         setShowEditModal(false)
         setCurrentWord(null)
-        getWords()
+        getWords(currentPage, pageSize)
+    }
+
+    function goToPage(current: number) {
+        setCurrentPage(current)
     }
 
     return (
         <div className="bg-white rounded-xl shadow p-4 sm:p-6">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 text-center mb-4">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 text-center">
                 Palabras disponibles
             </h1>
             <div className="flex justify-end mb-4">
@@ -57,9 +64,9 @@ const Words = () => {
             {
                 currentWord && (
 
-                    <EditWord 
-                        visible={showEditModal} 
-                        onClose={onCloseEditModal} 
+                    <EditWord
+                        visible={showEditModal}
+                        onClose={onCloseEditModal}
                         currentWord={currentWord}
                     />
                 )
@@ -104,6 +111,8 @@ const Words = () => {
                     )}
                 </div>
             )}
+            <Pagination pages={totalPages} currentPage={currentPage} goToPage={goToPage}/> 
+
         </div>
     );
 };
