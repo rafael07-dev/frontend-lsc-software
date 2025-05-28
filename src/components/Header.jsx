@@ -10,10 +10,10 @@ export function Header() {
 
     return (
         <header className="bg-white shadow-md z-50">
-            <div className="container mx-auto flex justify-between items-center h-20 px-6">
+            <div className="container mx-auto flex justify-between items-center h-14 px-6">
                 {/* Sección del Logo */}
                 <div>
-                    <img className="cursor-pointer" onClick={() => navigate("/")} src={logo} width="160" height="160" alt="Logo" />
+                    <img className="cursor-pointer" onClick={() => navigate("/")} src={logo} width="120" height="100" alt="Logo" />
                 </div>
 
                 {/* Sección de Navegación */}
