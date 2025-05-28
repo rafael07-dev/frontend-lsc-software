@@ -1,63 +1,10 @@
-import { FormEvent, useEffect, useState } from "react";
 import { useWords } from "../hooks/useWords";
-import { useAuth } from "../hooks/useAuth";
-import { toast } from "react-toastify";
+import { useMedia } from "../hooks/useMedia";
 
 const AddMedia = () => {
-  const { words, getWords } = useWords();
-  const { token } = useAuth()
-  const [selectedWordId, setSelectedWordId] = useState<number | null>(null)
-  const [file, setFile] = useState<File | null>(null)
 
-  useEffect(() => {
-    getWords();
-  }, []);
-
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
-    if (!file || !selectedWordId) {
-      return;
-    }
-
-    const data = new FormData();
-    data.append("file", file)
-
-    await sendFile(selectedWordId, data)
-
-    toast.success("Video gurdado correctamente");
-    setFile(null)
-    setSelectedWordId(null)
-  }
-
-  async function sendFile(id: number | null, data: FormData) {
-    if (!id || !data) {
-      return;
-    }
-    const response = await fetch(`http://localhost:8080/api/words/${id}/upload`, {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-      body: data
-    });
-
-    if (!response.ok) {
-      throw new Error("ocurrio un error");
-    }
-  }
-
-  function handleInput(e: React.ChangeEvent<HTMLSelectElement>) {
-    setSelectedWordId(Number(e.target.value))
-  }
-
-  function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files
-
-    if (file) {
-      setFile(file[0])
-    }
-  }
+  const { words } = useWords();
+  const {handleSubmit, handleInput, handleFile} = useMedia()
 
   return (
     <div className="bg-white rounded-xl shadow-md p-6 mt-8 max-w-2xl mx-auto border border-gray-200">
