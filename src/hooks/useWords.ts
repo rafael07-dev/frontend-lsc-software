@@ -18,10 +18,13 @@ interface WordRequest {
 
 export function useWords() {
     const [words, setWords] = useState<Word[]>([]);
+    const [totalPages, setTotalPages] = useState<number | undefined>()
+    const [currentPage, setCurrentPage] = useState<number>(0)
+    const [pageSize, setPageSize] = useState<number>(20)
     const { token } = useAuth()
 
-    async function getWords() {
-        const URL: string = "http://localhost:8080/api/words/";
+    async function getWords(pageIndex: number, pageSize: number) {
+        const URL: string = `http://localhost:8080/api/words/?pageIndex=${pageIndex}&pageSize=${pageSize}`;
         try {
             const res = await fetch(URL, {
                 method: "GET",
@@ -35,8 +38,9 @@ export function useWords() {
                 throw new Error("No se pudo obtener las palabras");
             }
 
-            const data: Word[] = await res.json();
-            setWords(data);
+            const data = await res.json();
+            setWords(data.content);
+            setTotalPages(data.totalPages)
         } catch (error) {
             console.error("Error al obtener palabras:", error);
         }
@@ -57,7 +61,7 @@ export function useWords() {
                 throw new Error("No se pudo eliminar la palabra");
             }
 
-            getWords()
+            getWords(currentPage, pageSize)
             toast.success("Palabra eliminada correctamente")
 
         } catch (error) {
@@ -66,7 +70,7 @@ export function useWords() {
     }
 
     async function updateWord(word: WordRequest, id: number) {
-        
+
         try {
 
             const URL = `http://localhost:8080/api/words/update/${id}`;
@@ -123,12 +127,12 @@ export function useWords() {
         }
     }
 
-
     useEffect(() => {
         if (!token) return;
 
-        getWords();
-    }, [token, words]);
+        getWords(currentPage, pageSize);
+    }, [token, currentPage]);
 
-    return { words, getWords, deleteWord, updateWord, createWord }
+    return { words, getWords, deleteWord, updateWord, createWord, 
+                            totalPages, currentPage, setCurrentPage, pageSize }
 }
