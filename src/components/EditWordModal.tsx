@@ -23,7 +23,7 @@ interface EditWordProps {
     currentWord: Word;
 }
 
-const EditWord = ({ visible, onClose, currentWord }: EditWordProps) => {
+const EditWordModal = ({ visible, onClose, currentWord }: EditWordProps) => {
 
     const [wordText, setWordText] = useState<string>("")
     const [letterId, setLetterId] = useState<number | "">("")
@@ -148,4 +148,4 @@ const EditWord = ({ visible, onClose, currentWord }: EditWordProps) => {
     )
 }
 
-export default EditWord;
+export default EditWordModal;
