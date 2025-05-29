@@ -14,10 +14,11 @@ interface Video {
 }
 
 interface VideoListProps {
-    videos: Video[]
+    videos: Video[];
+    currentVideo: (v: Video) => void
 }
 
-const VideoList = ({ videos } : VideoListProps) => {
+const VideoList = ({ videos, currentVideo } : VideoListProps) => {
     return (
         <>
              {videos.length === 0 ? (
@@ -42,9 +43,12 @@ const VideoList = ({ videos } : VideoListProps) => {
                             </video>
                             <h2 className="font-semibold text-gray-700 text-sm truncate"><span className="text-gray-500">Significado seña:</span> {v.word?.word}</h2>
                             <div className="flex gap-1">
-                                <Link to={`/admin/media/edit/${v.word.id}`} className="bg-blue-300 text-blue-700 px-1 py-0.5 rounded hover:bg-blue-400 transition text-xs">
+                                <button 
+                                    onClick={() => currentVideo(v)}
+                                    className="bg-blue-300 text-blue-700 px-1 py-0.5 rounded hover:bg-blue-400 transition text-xs"
+                                >
                                     Editar
-                                </Link>
+                                </button>
                                 <button className="bg-red-200 text-red-700 px-1 py-0.5 rounded hover:bg-red-300 transition text-xs">
                                     Eliminar
                                 </button>
