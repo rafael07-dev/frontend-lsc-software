@@ -1,7 +1,14 @@
-import { Link, Outlet } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
-import AddWord from "./AddWord";
+import {
+    Home,
+    Users,
+    BookOpen,
+    Video,
+    HelpCircle,
+    Settings,
+} from "lucide-react";
 
 interface User {
     id: number;
@@ -18,33 +25,40 @@ interface User {
 
 const AdminPanel = () => {
     const [user, setUser] = useState<User | null>(null);
-    const URL: string = "http://localhost:8080/api/users/authenticated";
+    const URL = "http://localhost:8080/api/users/authenticated";
     const { token } = useAuth();
 
-    async function getUserInfo() {
-        try {
-            const response = await fetch(URL, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error("No se pudo obtener el usuario");
-            }
-
-            const data: User = await response.json();
-            setUser(data);
-        } catch (e) {
-            console.log(e);
-        }
-    }
-
     useEffect(() => {
+        async function getUserInfo() {
+            try {
+                const response = await fetch(URL, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) throw new Error("No se pudo obtener el usuario");
+
+                const data: User = await response.json();
+                setUser(data);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
         getUserInfo();
     }, [token]);
+
+    const navItems = [
+        { to: "/admin", label: "Dashboard", icon: <Home size={18} /> },
+        { to: "/admin/users", label: "Usuarios", icon: <Users size={18} /> },
+        { to: "/admin/words", label: "Palabras", icon: <BookOpen size={18} /> },
+        { to: "/admin/media", label: "Multimedia", icon: <Video size={18} /> },
+        { to: "/admin/questions", label: "Preguntas", icon: <HelpCircle size={18} /> },
+        { to: "/admin/settings", label: "Configuración", icon: <Settings size={18} /> },
+    ];
 
     return (
         <div className="flex h-screen bg-gray-100 text-gray-800">
@@ -56,35 +70,36 @@ const AdminPanel = () => {
 
                 {user && (
                     <div className="mb-6 text-sm text-gray-300 text-center border-b border-gray-600 pb-4">
-                        <p className="mb-1">Bienvenido, <span className="font-semibold text-white">{user.firstName}</span></p>
+                        <p className="mb-1">
+                            Bienvenido,{" "}
+                            <span className="font-semibold text-white">{user.firstName}</span>
+                        </p>
                         <p className="text-xs text-gray-400">{user.username}</p>
                     </div>
                 )}
 
                 <nav className="flex-1 space-y-2">
-                    {[
-                        { to: "/admin", label: "Dashboard" },
-                        { to: "/admin/users", label: "Usuarios" },
-                        { to: "/admin/letters", label: "Letras" },
-                        { to: "/admin/words", label: "Palabras" },
-                        { to: "/admin/media", label: "Multimedia" },
-                        { to: "/admin/questions", label: "Preguntas" },
-                        { to: "/admin/settings", label: "Configuración" },
-                    ].map((item) => (
-                        <Link
-                            key={item.to}
-                            to={item.to}
-                            className="block rounded-md py-2 px-3 hover:bg-gray-700 hover:text-blue-400 transition"
+                    {navItems.map(({ to, label, icon }) => (
+                        <NavLink
+                            key={to}
+                            to={to}
+                            className={({ isActive }) =>
+                                `flex items-center gap-3 rounded-md py-2 px-3 transition ${isActive
+                                    ? "bg-blue-600 text-white"
+                                    : "hover:bg-gray-700 hover:text-blue-400"
+                                }`
+                            }
+                            end={to === "/admin"}
                         >
-                            {item.label}
-                        </Link>
+                            {icon}
+                            <span>{label}</span>
+                        </NavLink>
                     ))}
                 </nav>
             </aside>
 
             {/* Main Content */}
             <main className="flex-1 p-2 overflow-y-auto">
-            
                 <Outlet />
             </main>
         </div>
