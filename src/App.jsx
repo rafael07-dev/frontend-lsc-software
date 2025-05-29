@@ -13,8 +13,6 @@ import Quiz from './components/Quiz';
 import AdminPanel from './components/AdminPanel';
 import Words from './components/Words';
 import Media from './components/Media';
-import AddMedia from './components/AddMedia';
-import EditMedia from './components/EditMedia';
 
 function App() {
   return (
@@ -33,8 +31,6 @@ function App() {
               <Route path="/admin" element={<AdminPanel />} >
                 <Route path='words' element={<Words/>} />
                 <Route path='media' element={<Media />} >
-                  <Route path='add' element={<AddMedia/>} />
-                  <Route path='edit/:id' element={<EditMedia />} />
                 </Route>
               </Route>
             </Routes>
