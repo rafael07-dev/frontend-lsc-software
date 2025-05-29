@@ -52,12 +52,12 @@ export function useMedia() {
             const data = await response.json()
 
             // Forzar que React vea el cambio
-            setVideo(null); // limpiamos primero
+            /*setVideo(null); // limpiamos primero
             setTimeout(() => {
                 setVideo(data); // luego seteamos el nuevo valor
-            }, 50); // un pequeño delay para asegurar el render
+            }, 50); // un pequeño delay para asegurar el render*/
 
-            //setVideo(data)
+            setVideo(data)
 
         } catch (error) {
             console.log(error);
