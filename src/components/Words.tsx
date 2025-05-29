@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AddWord from "./AddWord";
-import EditWord from "./EditWord";
+import EditWordModal from "./EditWordModal";
 import { useWords } from "../hooks/useWords";
-
 import Pagination from "./Pagination";
 
 export interface Word {
@@ -64,7 +63,7 @@ const Words = () => {
             {
                 currentWord && (
 
-                    <EditWord
+                    <EditWordModal
                         visible={showEditModal}
                         onClose={onCloseEditModal}
                         currentWord={currentWord}
