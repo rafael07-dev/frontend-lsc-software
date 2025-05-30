@@ -1,201 +1,174 @@
-import { useState } from "react"
+import { useState, useEffect, FormEvent } from "react";
 import { toast } from "react-toastify";
 import { useAuth } from "../hooks/useAuth";
 import { useWords } from "./useWords";
-import { FormEvent, useEffect } from "react";
-import { useParams } from "react-router-dom";
-
-
-interface Video {
-    id: number;
-    giffUrl: string;
-    word: {
-        id: number;
-        word: string;
-        letter: {
-            id: number;
-            letter: string;
-        }
-    }
-}
+import { Video } from "types/Video";
 
 export function useMedia() {
+  const { getWords, currentPage } = useWords();
+  const { token } = useAuth();
 
-    const { id } = useParams()
-    const { getWords, currentPage } = useWords();
-    const [currentPageVideos, setCurrentPageVideos] = useState(0);
-    const [videos, setVideos] = useState<Video[]>([]);
-    const [totalPages, setTotalPages] = useState<number | undefined>(0)
-    const [selectedWordId, setSelectedWordId] = useState<number | null>(Number(id));
-    const [file, setFile] = useState<File | null>(null)
-    const [video, setVideo] = useState<Video | null>(null)
-    const videoId = Number(id);
-    const { token } = useAuth()
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [file, setFile] = useState<File | null>(null);
+  const [totalPages, setTotalPages] = useState<number | undefined>(0);
+  const [currentPageVideos, setCurrentPageVideos] = useState(0);
 
-    function goToPage(current: number) {
-        setCurrentPageVideos(current)
+  const [currentVideo, setCurrentVideo] = useState<Video | null>(null);
+
+  const [selectedWordId, setSelectedWordId] = useState<number | undefined>(undefined)
+  
+  function goToPage(current: number) {
+    setCurrentPageVideos(current);
+  }
+
+  async function getVideo(id: number | undefined) {
+    try {
+      const response = await fetch(`http://localhost:8080/api/gifs/word/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+      setCurrentVideo(data);
+      await getVideos(currentPageVideos, 10)
+    } catch (error) {
+      console.error("Error al obtener video:", error);
+    }
+  }
+
+  async function getVideos(pageIndex: number = 0, pageSize: number) {
+    try {
+      const res = await fetch(`http://localhost:8080/api/gifs/?pageIndex=${pageIndex}&pageSize=${pageSize}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      if (!res.ok) throw new Error("No se pudieron obtener los videos");
+
+      const data = await res.json();
+      setTotalPages(data.totalPages);
+      setVideos(data.content);
+    } catch (error) {
+      console.error("Error al obtener videos:", error);
+    }
+  }
+
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    if (!file || !selectedWordId) {
+      alert("Error: faltan datos");
+      return;
     }
 
-    console.log(selectedWordId);
+    const data = new FormData();
+    data.append("file", file);
 
+    await sendFile(selectedWordId, data);
 
-    async function getVideo() {
-        try {
-            const response = await fetch(`http://localhost:8080/api/gifs/word/${videoId}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
-                }
-            });
+    toast.success("Video guardado correctamente");
+    setFile(null);
+    getVideos(currentPageVideos, 10);
+  }
 
-            const data = await response.json()
+  async function handleUpdate(e: FormEvent<HTMLFormElement>, onCloseEditModal: () => void) {
+    e.preventDefault();
 
-            // Forzar que React vea el cambio
-            /*setVideo(null); // limpiamos primero
-            setTimeout(() => {
-                setVideo(data); // luego seteamos el nuevo valor
-            }, 50); // un pequeño delay para asegurar el render*/
-
-            setVideo(data)
-
-        } catch (error) {
-            console.log(error);
-
-        }
+    if (!file || !selectedWordId) {
+      alert("Error: faltan datos");
+      return;
     }
 
-    async function getVideos(pageIndex: number = 0, pageSize: number) {
-        const URL: string = `http://localhost:8080/api/gifs/?pageIndex=${pageIndex}&pageSize=${pageSize}`;
+    const data = new FormData();
+    data.append("file", file);
 
-        const res = await fetch(URL, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
-            }
-        })
+    try {
+      await updateFile(selectedWordId, data);
+      await getVideo(selectedWordId);
 
-        if (!res.ok) {
-            throw new Error("No se pudieron obtener los videos");
-        }
-
-        const data = await res.json()
-
-        setTotalPages(data.totalPages)
-        setVideos(data.content)
+      toast.success("Video actualizado correctamente");
+      onCloseEditModal();
+    } catch (error) {
+      toast.error("Hubo un error al actualizar");
     }
 
-    async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-        e.preventDefault();
+    setFile(null);
+  }
 
-        if (!file || !selectedWordId) {
-            alert("Error")
-            return;
-        }
+  async function sendFile(id: number, data: FormData) {
+    const res = await fetch(`http://localhost:8080/api/words/${id}/upload`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      body: data
+    });
 
-        const data = new FormData();
-        data.append("file", file)
+    if (!res.ok) throw new Error("Ocurrió un error al subir el video");
+  }
 
-        console.log(file);
+  async function updateFile(id: number, data: FormData) {
+    const res = await fetch(`http://localhost:8080/api/words/${id}/update`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      body: data
+    });
 
+    if (!res.ok) throw new Error("Ocurrió un error al actualizar el video");
+  }
 
-        await sendFile(selectedWordId, data)
+  function handleInput(e: React.ChangeEvent<HTMLSelectElement>) {
+    const { value } = e.target;
 
-        toast.success("Video gurdado correctamente");
-        setFile(null)
-        setSelectedWordId(null)
+    console.log(value);
+    
+    const video = videos.find((v) => v.word.id === Number(value));
+
+    if (video) {
+      setCurrentVideo(video);
+      setSelectedWordId(video.word.id)
     }
+  }
 
-    async function handleUpdate(e: FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-
-        if (!file || !selectedWordId) {
-            alert("Error")
-            return;
-        }
-
-        const data = new FormData();
-        data.append("file", file)
-
-        console.log(file);
-
-        try {
-
-            await updateFile(selectedWordId, data)
-
-            await getVideo()
-            toast.success("Video gurdado correctamente");
-        } catch (error) {
-            toast.error("Hubo un error")
-        }
-
-        setFile(null)
-        setSelectedWordId(null)
+  function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files;
+    if (file) {
+      setFile(file[0]);
     }
+  }
 
-    async function sendFile(id: number | null, data: FormData) {
-        if (!id || !data) {
-            return;
-        }
-        const response = await fetch(`http://localhost:8080/api/words/${id}/upload`, {
-            method: "POST",
-            headers: {
-                authorization: `Bearer ${token}`,
-            },
-            body: data
-        });
+  useEffect(() => {
+    setSelectedWordId(currentVideo?.word.id)
+  }, [currentVideo])
 
-        if (!response.ok) {
-            throw new Error("ocurrio un error");
-        }
-    }
+  useEffect(() => {
+    getWords(currentPage, 100);
+  }, []);
 
-    async function updateFile(id: number | null, data: FormData) {
-        if (!id || !data) {
-            return;
-        }
-        const response = await fetch(`http://localhost:8080/api/words/${id}/update`, {
-            method: "PUT",
-            headers: {
-                authorization: `Bearer ${token}`,
-            },
-            body: data
-        });
+  useEffect(() => {
+    getVideos(currentPageVideos, 10);
+  }, [token, currentPageVideos]);
 
-        if (!response.ok) {
-            throw new Error("ocurrio un error");
-        }
-    }
-
-    function handleInput(e: React.ChangeEvent<HTMLSelectElement>) {
-
-        console.log(e.target.value);
-
-        setSelectedWordId(Number(e.target.value))
-    }
-
-    function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
-        const file = e.target.files
-
-        console.log(file);
-
-
-        if (file) {
-            setFile(file[0])
-        }
-    }
-
-    useEffect(() => {
-        getWords(currentPage, 100);
-        if (videoId) {
-            getVideo()
-        }
-    }, []);
-
-    useEffect(() => {
-        getVideos(currentPageVideos, 10)
-    }, [token, currentPageVideos]);
-
-    return { handleFile, handleInput, handleSubmit, handleUpdate, getVideo, video, videos, setVideo, totalPages, goToPage, currentPageVideos }
+  return {
+    handleFile,
+    handleInput,
+    handleSubmit,
+    handleUpdate,
+    getVideo,
+    currentVideo,
+    videos,
+    totalPages,
+    goToPage,
+    currentPageVideos,
+    setCurrentVideo,
+    selectedWordId
+  };
 }
