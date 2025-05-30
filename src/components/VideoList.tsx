@@ -1,24 +1,12 @@
-import { Link } from "react-router-dom";
-
-interface Video {
-    id: number;
-    giffUrl: string;
-    word: {
-        id: number;
-        word: string;
-        letter: {
-            id: number;
-            letter: string;
-        }
-    }
-}
+import { Video } from "types/Video";
 
 interface VideoListProps {
     videos: Video[];
-    currentVideo: (v: Video) => void
+    onEdit: (video: Video) => void
 }
 
-const VideoList = ({ videos, currentVideo } : VideoListProps) => {
+const VideoList = ({ videos, onEdit } : VideoListProps) => {
+
     return (
         <>
              {videos.length === 0 ? (
@@ -44,7 +32,7 @@ const VideoList = ({ videos, currentVideo } : VideoListProps) => {
                             <h2 className="font-semibold text-gray-700 text-sm truncate"><span className="text-gray-500">Significado seña:</span> {v.word?.word}</h2>
                             <div className="flex gap-1">
                                 <button 
-                                    onClick={() => currentVideo(v)}
+                                    onClick={() => onEdit(v)}
                                     className="bg-blue-300 text-blue-700 px-1 py-0.5 rounded hover:bg-blue-400 transition text-xs"
                                 >
                                     Editar
