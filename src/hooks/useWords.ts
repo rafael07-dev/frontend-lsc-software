@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuth } from "./useAuth";
 import { toast } from "react-toastify";
 
-export interface Word {
+interface Word {
     id: number;
     word: string;
     letter: {
