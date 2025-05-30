@@ -1,29 +1,24 @@
-import { useMedia } from "../hooks/useMedia";
+import React from "react";
 import { useWords } from "../hooks/useWords";
-
-interface Video {
-  id: number;
-  giffUrl: string;
-  word: {
-    id: number;
-    word: string;
-    letter: {
-      id: number;
-      letter: string;
-    }
-  }
-}
+import { Video } from "types/Video";
 
 interface EditaModalProps {
   isVisible: boolean;
-  onClose: () => void;
-  video: Video | null;
+  onCloseEditModal: () => void;
+  currentVideo: Video | null;
+  handleInput: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  handleFile: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleUpdate: (e: React.FormEvent<HTMLFormElement>, onCloseEditModal: () => void) => void;
+  selectedWordId: number | undefined;
 }
 
-const EditMediaModal = ({ isVisible, onClose, video }: EditaModalProps) => {
-  const { words } = useWords();
-  const { handleUpdate, handleInput, handleFile } = useMedia();
+const EditMediaModal = ({ isVisible, onCloseEditModal, currentVideo, handleInput, handleUpdate, handleFile, selectedWordId }: EditaModalProps) => {
 
+  const { words } = useWords();
+
+  //console.log(selectedWordId);
+  
+  
   if (!isVisible) return null;
 
   return (
@@ -39,35 +34,35 @@ const EditMediaModal = ({ isVisible, onClose, video }: EditaModalProps) => {
             Seña actual
           </label>
 
-          {video?.giffUrl && (
+          {currentVideo?.giffUrl && (
             <video
               autoPlay
               loop
               muted
               className="rounded-lg w-56 h-auto mx-auto border border-gray-300 shadow"
             >
-              <source src={`http://localhost:8080${video?.giffUrl}?t=${new Date().getTime()}`} type="video/mp4" />
+              <source src={`http://localhost:8080${currentVideo?.giffUrl}?t=${new Date().getTime()}`} type="video/mp4" />
               Tu navegador no soporta video.
             </video>
           )}
 
-          {video?.word?.word && (
+          {currentVideo?.word?.word && (
             <p className="text-gray-600">
-              <span className="font-semibold">Significado:</span> {video.word.word}
+              <span className="font-semibold">Significado:</span> {currentVideo.word.word}
             </p>
           )}
         </div>
 
         {/* Formulario */}
-        <form onSubmit={handleUpdate} className="space-y-2">
+        <form onSubmit={(e) => handleUpdate(e, onCloseEditModal)} className="space-y-2">
           {/* Selector de palabra */}
           <div>
             <label htmlFor="word" className="block text-gray-700 font-medium mb-2">
               Cambiar palabra asociada
             </label>
             <select
-              onChange={handleInput}
-              value={video?.word.id}
+              onChange={(e) => handleInput(e)}
+              value={selectedWordId ?? ""}
               name="wordId"
               id="word"
               className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -99,7 +94,7 @@ const EditMediaModal = ({ isVisible, onClose, video }: EditaModalProps) => {
           <div className="flex justify-end gap-4">
             <button
               type="button"
-              onClick={onClose}
+              onClick={onCloseEditModal}
               className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-6 rounded-lg transition"
             >
               Cancelar
