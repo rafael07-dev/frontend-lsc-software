@@ -1,39 +1,36 @@
-import { Outlet, useMatch } from "react-router-dom";
 import Pagination from "./Pagination";
 import { useMedia } from "../hooks/useMedia";
 import VideoList from "./VideoList";
 import { useState } from "react";
 import EditMediaModal from "./EditMediaModal";
 import AddMediaModal from "./AddMediaModal";
-
-interface Video {
-    id: number;
-    giffUrl: string;
-    word: {
-        id: number;
-        word: string;
-        letter: {
-            id: number;
-            letter: string;
-        }
-    }
-}
+import { Video } from "types/Video";
 
 const Media = () => {
 
-    const { videos, totalPages, goToPage, currentPageVideos } = useMedia()
-    const isAdding = useMatch("/admin/media/add")
-    const isEditing = useMatch("/admin/media/edit/:id")
+    const { 
+        videos, 
+        totalPages, 
+        goToPage, 
+        currentPageVideos, 
+        currentVideo, 
+        setCurrentVideo, 
+        handleUpdate, 
+        handleInput, 
+        handleFile,
+        selectedWordId
+    } = useMedia()
+
     const [showEditModal, setShowEditModal] = useState<boolean>(false)
     const [showAddModal, setShowAddModal] = useState<boolean>(false)
-    const [currentVideo, setCurrentVideo] = useState<Video | null>(null)
 
     function onCloseEditModal() {
         setShowEditModal(false)
+        setCurrentVideo(null)
     }
 
-    function handleEditModal(v: Video) {
-        setCurrentVideo(v)
+    function handleEditModal(video: Video) {
+        setCurrentVideo(video)
         setShowEditModal(true)
     }
 
@@ -43,10 +40,6 @@ const Media = () => {
 
     function handleAddModal() {
         setShowAddModal(true)
-    }
-
-    if (isAdding || isEditing) {
-        return <Outlet />;
     }
 
     return (
@@ -65,11 +58,15 @@ const Media = () => {
                 onClose={onCloseAddModal} 
             />
             <EditMediaModal 
-                isVisible={showEditModal} 
-                video={currentVideo} 
-                onClose={onCloseEditModal}
+                isVisible={showEditModal}
+                currentVideo={currentVideo}
+                handleInput={handleInput}
+                handleUpdate={handleUpdate}
+                selectedWordId={selectedWordId}
+                handleFile={handleFile} 
+                onCloseEditModal={onCloseEditModal}
             />
-            <VideoList videos={videos} currentVideo={handleEditModal}/>
+            <VideoList videos={videos} onEdit={handleEditModal}/>
             <Pagination pages={totalPages} currentPage={currentPageVideos} goToPage={goToPage}/>
         </div>
     );
