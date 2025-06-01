@@ -31,10 +31,10 @@ export function Header() {
                                 </li>
                                 <li>
                                     <button
-                                        onClick={() => navigate("/quiz")}
+                                        onClick={() => navigate("/practice")}
                                         className="text-gray-600 font-bold hover:text-blue-800"
                                     >
-                                        Quiz
+                                        Practica la seña
                                     </button>
                                 </li>
                                 <li>
