@@ -9,10 +9,11 @@ import { ToastContainer } from 'react-toastify';
 import ConfirmationEmail from './components/ConfirmationEmail';
 import Diccionary from './components/Diccionary';
 import Footer from './components/Footer';
-import Quiz from './components/Quiz';
 import AdminPanel from './components/AdminPanel';
 import Words from './components/Words';
 import Media from './components/Media';
+import AddSignPattern from './components/AddSignPattern';
+import HandSignPractice from './components/HandSignPractice'
 
 function App() {
   return (
@@ -22,16 +23,18 @@ function App() {
           <Header />
           <main className="flex-grow">
             <Routes>
+              <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/confirmation" element={<ConfirmationEmail />} />
-              <Route path="/" element={<Home />} />
               <Route path="/diccionario" element={<Diccionary />} />
-              <Route path="/quiz" element={<Quiz />} />
+              <Route path="/practice" element={<HandSignPractice />} />
               <Route path="/admin" element={<AdminPanel />} >
                 <Route path='words' element={<Words/>} />
                 <Route path='media' element={<Media />} >
                 </Route>
+                <Route path="signs" element={<AddSignPattern />} />
+
               </Route>
             </Routes>
             <ToastContainer />
