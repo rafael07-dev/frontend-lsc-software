@@ -8,6 +8,7 @@ import {
     Video,
     HelpCircle,
     Settings,
+    HandMetal
 } from "lucide-react";
 
 interface User {
@@ -57,7 +58,8 @@ const AdminPanel = () => {
         { to: "/admin/words", label: "Palabras", icon: <BookOpen size={18} /> },
         { to: "/admin/media", label: "Multimedia", icon: <Video size={18} /> },
         { to: "/admin/questions", label: "Preguntas", icon: <HelpCircle size={18} /> },
-        { to: "/admin/settings", label: "Configuración", icon: <Settings size={18} /> },
+        { to: "/admin/signs", label: "Señas", icon: <HandMetal size={18} /> },
+        { to: "/admin/settings", label: "Configuración", icon: <Settings size={18} /> }
     ];
 
     return (
