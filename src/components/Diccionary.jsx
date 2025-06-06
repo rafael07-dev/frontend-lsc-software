@@ -28,9 +28,9 @@ const Diccionary = () => {
 
             const data = await response.json();
 
-            console.log(data);
+            console.log(data.content);
 
-            setWords(data);
+            setWords(data.content);
             setSelectedWord(null);
             setGiffUrl(null)
 
@@ -137,7 +137,7 @@ const Diccionary = () => {
 
                 {/* Sección GIFs */}
                 <div className="bg-white shadow-md rounded-xl p-4 border border-gray-200">
-                    <h2 className="text-xl text-center font-semibold text-gray-700 mb-3">GIFs para la palabra seleccionada</h2>
+                    <h2 className="text-xl text-center font-semibold text-gray-700 mb-3">Seña para la palabra seleccionada</h2>
                     <div className="space-y-3">
                         {
                             <video className="rounded-lg" src={giffUrl} width="320" height="240" autoPlay loop muted playsInline>
