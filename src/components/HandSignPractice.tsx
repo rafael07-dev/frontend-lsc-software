@@ -179,7 +179,7 @@ export default function HandSignPractice() {
     return (
         <div className="max-w-screen-sm mx-auto p-4 bg-white-400 rounded-2xl shadow-xl text-center h-auto flex flex-col justify-center">
 
-            <h1 className="text-xl font-bold text-gray-800 mb-2">Practica: {showPattern}</h1>
+            <h1 className="text-xl font-bold text-gray-800 mb-2">Practica la seña: {showPattern}</h1>
 
             <video
                 ref={videoRef}
