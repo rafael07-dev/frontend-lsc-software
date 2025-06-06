@@ -13,7 +13,8 @@ import AdminPanel from './components/AdminPanel';
 import Words from './components/Words';
 import Media from './components/Media';
 import AddSignPattern from './components/AddSignPattern';
-import HandSignPractice from './components/HandSignPractice'
+import HandSignPractice from './components/HandSignPractice';
+import Users from './components/Users';
 
 function App() {
   return (
@@ -31,10 +32,9 @@ function App() {
               <Route path="/practice" element={<HandSignPractice />} />
               <Route path="/admin" element={<AdminPanel />} >
                 <Route path='words' element={<Words/>} />
-                <Route path='media' element={<Media />} >
-                </Route>
+                <Route path='media' element={<Media />} />
+                <Route path='users' element={<Users />}/>
                 <Route path="signs" element={<AddSignPattern />} />
-
               </Route>
             </Routes>
             <ToastContainer />
