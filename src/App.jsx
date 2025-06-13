@@ -15,6 +15,7 @@ import Media from './components/Media';
 import AddSignPattern from './components/AddSignPattern';
 import HandSignPractice from './components/HandSignPractice';
 import Users from './components/Users';
+import Questions from './components/Questions';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
                 <Route path='media' element={<Media />} />
                 <Route path='users' element={<Users />}/>
                 <Route path="signs" element={<AddSignPattern />} />
+                <Route path='questions' element={<Questions />}/> 
               </Route>
             </Routes>
             <ToastContainer />
