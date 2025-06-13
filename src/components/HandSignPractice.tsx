@@ -1,5 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useHandDetection } from "../hooks/useHandDetection";
+import { drawConnectors, drawLandmarks} from "@mediapipe/drawing_utils";
+import { HAND_CONNECTIONS } from "@mediapipe/hands";
 import { useAuth } from "../hooks/useAuth";
 
 export type Landmark = { x: number; y: number; z: number };
@@ -120,6 +122,8 @@ export default function HandSignPractice() {
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(true);
 
+    const canvaRef = useRef<HTMLCanvasElement>(null)
+
     const userFramesRef = useRef<Landmark[][]>([]);
 
     useEffect(() => {
@@ -148,7 +152,29 @@ export default function HandSignPractice() {
     }, [token]);
 
     const onResults = useCallback((results: any) => {
+
+        if (canvaRef.current == null) {
+            return null;
+        }
+
+        const canvaCtx = canvaRef.current?.getContext('2d')
+
+        canvaCtx?.save()
+
+        canvaCtx?.clearRect(0, 0, canvaRef.current?.width, canvaRef.current?.height)
+
+        canvaCtx?.drawImage(results.image, 0, 0, canvaRef.current?.width, canvaRef.current?.height)
+
+        if (canvaCtx == null) {
+            return null
+        }
+
         if (results.multiHandLandmarks?.[0]) {
+            for (const landmarks of results.multiHandLandmarks) {
+                drawConnectors(canvaCtx, landmarks, HAND_CONNECTIONS,
+                    { color: '#00FF00', lineWidth: 5 });
+                drawLandmarks(canvaCtx, landmarks, { color: '#FF0000', lineWidth: 2 });
+            }
             const userLandmarks = results.multiHandLandmarks[0];
             userFramesRef.current = [...userFramesRef.current, userLandmarks].slice(-30);
 
@@ -169,6 +195,7 @@ export default function HandSignPractice() {
             setMessage("Muestra tu mano claramente");
             setSimilarity(0);
             setSuccess(false);
+            canvaCtx.restore()
         }
     }, [patterns, showPattern, loading]);
 
@@ -188,6 +215,8 @@ export default function HandSignPractice() {
                 playsInline
                 className="w-full max-w-xs rounded-xl border-4 border-gray-300 mb-3 mx-auto"
             />
+
+            <canvas width={1280} height={720} ref={canvaRef}></canvas>
 
             <div className="relative h-4 bg-gray-200 rounded-full overflow-hidden mb-3">
                 <div
