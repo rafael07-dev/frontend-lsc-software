@@ -16,10 +16,10 @@ export function useHandDetection(onResults: (results: Results) => void) {
 
       // En useHandDetection.js, modifica los parámetros
       hands.setOptions({
-        maxNumHands: 1,
+        maxNumHands: 2,
         modelComplexity: 1,
-        minDetectionConfidence: 0.7,  // Reducido de 0.7
-        minTrackingConfidence: 0.7,   // Reducido de 0.7
+        minDetectionConfidence: 0.5,  // Reducido de 0.7
+        minTrackingConfidence: 0.5,   // Reducido de 0.7
       });
 
       hands.onResults(onResults);
@@ -34,8 +34,8 @@ export function useHandDetection(onResults: (results: Results) => void) {
             }
           }
         },
-        width: 640,
-        height: 480,
+        width: 1280,
+        height: 720,
       });
 
       cameraRef.current.start();
